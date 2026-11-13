@@ -35,12 +35,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{ou
 .chip,.sort,.lang button,.tag,.hero-visual,.total-mark {
  font-family:'Press Start 2P',monospace;
 }
-.topbar{height:94px;border-bottom:3px solid #4c4c4c;display:flex;justify-content:space-between;align-items:center;gap:14px;position:relative}
-.topbar:after{content:'';position:absolute;bottom:-3px;left:0;width:118px;height:3px;background:#f5f5f5}
-.brand{font-weight:700;font-size:15px;letter-spacing:.01em;color:#fff;display:flex;align-items:center;gap:12px}
-.brand:before{content:'';height:16px;width:16px;background:#fff;box-shadow:inset 0 0 0 4px #0c0c0c,0 0 0 3px #f5f5f5,3px 3px 0 3px #666;display:block;margin:0 4px 0 3px}
-.byline{font-size:7px;line-height:2;letter-spacing:0;color:#aaa;margin-top:12px;white-space:normal}
-.pixel-marker{color:#fff}
+.topbar{height:94px;border-bottom:3px solid #4c4c4c;display:flex;justify-content:flex-end;align-items:center;gap:14px;position:relative}
 .lang{display:flex;align-items:center;gap:8px;background:transparent;padding:0;border:0}
 .lang button{position:relative;isolation:isolate;min-width:70px;padding:13px 14px;font-size:9px;line-height:1.5;color:#fff;background:#202020;border:3px solid #858585;box-shadow:4px 4px 0 #676767;transition:transform .1s,box-shadow .1s,background .1s;white-space:nowrap}
 .lang button:before,.chip:before,.sort:before{content:'';position:absolute;left:-3px;top:-3px;width:6px;height:6px;background:var(--bg);pointer-events:none}
@@ -105,7 +100,7 @@ html[lang='en'] .game h2{font-family:'DM Sans',sans-serif}
 .footer a:hover{text-decoration:underline}
 @media(max-width:1080px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:760px){
- .wrap{padding:0 18px}.topbar{height:76px}.brand{font-size:13px}.byline{font-size:6px;margin-top:8px}.lang{gap:5px}.lang button{min-width:48px;padding:11px 8px;font-size:7px;box-shadow:3px 3px 0 #777}
+ .wrap{padding:0 18px}.topbar{height:76px}.lang{gap:5px}.lang button{min-width:48px;padding:11px 8px;font-size:7px;box-shadow:3px 3px 0 #777}
  .intro{padding:50px 0 40px}.eyebrow{font-size:6px;gap:7px}.hero-visual{font-size:clamp(17px,5.3vw,38px);line-height:1.8;margin-top:18px;letter-spacing:-.04em;text-shadow:0 3px #444}
  .intro h1{font-size:23px;margin-top:15px}.subtitle{font-size:12px}.summary{margin-top:32px;min-width:0;max-width:calc(100% - 16px);padding:25px 16px 18px;gap:15px;box-shadow:4px 4px 0 #777,7px 7px 0 #222}.summary:before{font-size:7px}.count{font-size:clamp(25px,7vw,37px)}.count-label{font-size:11px}
  .tools{padding:23px 0 26px}.toolrow{gap:12px}.search,.sort{height:49px;border-width:3px;box-shadow:3px 3px 0 #666}.search{padding:0 9px;gap:7px}.search input{font-size:12px}.sort{max-width:130px;font-size:7px;padding:0 4px}.chips{gap:10px;margin-top:23px}.chips + .chips{margin-top:19px}.chip{min-height:39px;font-size:7px;line-height:1.5;padding:10px 9px;border-width:2px;box-shadow:3px 3px 0 #555}
@@ -117,11 +112,10 @@ html[lang='en'] .game h2{font-family:'DM Sans',sans-serif}
 
 /* V4.2 — Simple square outlines; preserve the approved pixel typography. */
 :root { --frame: #868686; }
-.intro h1, .brand, .game h2, .count-label, .subtitle { text-shadow: none !important; filter: none !important; }
+.intro h1, .game h2, .count-label, .subtitle { text-shadow: none !important; filter: none !important; }
 /* Preserve the clean heading, the 8-bit English masthead and number. */
 .hero-visual { text-shadow: none !important; }
 .led { box-shadow: none !important; }
-.brand:before { box-shadow: inset 0 0 0 3px #080808, 0 0 0 2px #eee !important; }
 /* These are actual English descriptions, so they should use the same pixel face
    as PERSONAL GAME COLLECTION rather than the ordinary sans-serif subtitle. */
 .subtitle {
@@ -178,7 +172,7 @@ html[lang='en'] .count-label {
 </head>
 <body>
 <div class="wrap">
-<header class="topbar"><div><div class="brand" id="brand">游戏经历库</div><div class="byline">BY YANGHUAN TAN <span class="pixel-marker">■</span> EST. 2026</div></div><div class="lang" aria-label="Language"><button class="active" id="zh" aria-pressed="true">中文</button><button id="en" aria-pressed="false">EN</button></div></header>
+<header class="topbar"><div class="lang" aria-label="Language"><button class="active" id="zh" aria-pressed="true">中文</button><button id="en" aria-pressed="false">EN</button></div></header>
 <main>
 <section class="intro"><div class="eyebrow"><span class="led" aria-hidden="true"></span> PERSONAL GAME COLLECTION <span class="slash">//</span> 2026</div><div class="hero-visual" aria-hidden="true"><span class="pixel-line">GAME</span><span class="pixel-line">LIBRARY</span></div><h1 id="title">游戏经历库</h1><p class="subtitle" id="subtitle">Curated by Yanghuan Tan</p><div class="summary"><span class="count" id="total">—</span><span class="count-label" id="countLabel">款已收录游戏</span></div><div class="status" id="status" aria-live="polite"></div></section>
 <section class="tools"><div class="toolrow"><label class="search"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input id="search" type="search" autocomplete="off" placeholder="搜索游戏名称..." aria-label="Search games" /></label><select id="sort" class="sort" aria-label="Sort games"><option value="hoursDesc">游玩时长：从高到低</option><option value="hoursAsc">游玩时长：从低到高</option><option value="name">名称 A–Z</option></select></div><div class="chips" id="genres" aria-label="Genre filters"></div><div class="chips" id="platforms" aria-label="Platform filters"></div></section>
@@ -186,12 +180,12 @@ html[lang='en'] .count-label {
 </main><footer class="footer"><span><span class="footer-pixel">■</span> GAME LIBRARY © YANGHUAN TAN</span><a href="#top" id="backTop">返回顶部 ↑</a></footer>
 </div>
 <script define:vars={{projectId,dataset}}>
-const ui={zh:{brand:'游戏经历库',title:'游戏经历库',subtitle:'Curated by Yanghuan Tan',count:'款已收录游戏',search:'搜索游戏名称...',all:'全部类型',allPlatforms:'全部平台',hoursDesc:'游玩时长：从高到低',hoursAsc:'游玩时长：从低到高',name:'名称 A–Z',completed:'已通关',played:'已游玩',progress:'进行中',empty:'没有找到符合条件的游戏',results:n=>`当前显示 ${n} 款`,back:'返回顶部 ↑',status:'正在读取游戏库…'},en:{brand:'Game Library',title:'Game Library',subtitle:'Curated by Yanghuan Tan',count:'games collected',search:'Search by game title...',all:'All genres',allPlatforms:'All platforms',hoursDesc:'Most played',hoursAsc:'Least played',name:'Title A–Z',completed:'Completed',played:'Played',progress:'In progress',empty:'No matching games',results:n=>`${n} games shown`,back:'Back to top ↑',status:'Loading library…'}};
+const ui={zh:{title:'游戏经历库',subtitle:'Curated by Yanghuan Tan',count:'款已收录游戏',search:'搜索游戏名称...',all:'全部类型',allPlatforms:'全部平台',hoursDesc:'游玩时长：从高到低',hoursAsc:'游玩时长：从低到高',name:'名称 A–Z',completed:'已通关',played:'已游玩',progress:'进行中',empty:'没有找到符合条件的游戏',results:n=>`当前显示 ${n} 款`,back:'返回顶部 ↑',status:'正在读取游戏库…'},en:{title:'Game Library',subtitle:'Curated by Yanghuan Tan',count:'games collected',search:'Search by game title...',all:'All genres',allPlatforms:'All platforms',hoursDesc:'Most played',hoursAsc:'Least played',name:'Title A–Z',completed:'Completed',played:'Played',progress:'In progress',empty:'No matching games',results:n=>`${n} games shown`,back:'Back to top ↑',status:'Loading library…'}};
 let lang='zh',genre='all',platform='all',sort='hoursDesc',query='',games=[];
 const el=id=>document.getElementById(id);
 const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function title(g){return lang==='zh'&&(g.titleZh||'').trim()?g.titleZh:g.titleEn}
-function labels(){const t=ui[lang];el('brand').textContent=t.brand;el('title').textContent=t.title;el('subtitle').textContent=t.subtitle;el('countLabel').textContent=t.count;el('search').placeholder=t.search;el('sort').options[0].text=t.hoursDesc;el('sort').options[1].text=t.hoursAsc;el('sort').options[2].text=t.name;el('empty').textContent=t.empty;el('backTop').textContent=t.back;for(const l of ['zh','en']){el(l).classList.toggle('active',l===lang);el(l).setAttribute('aria-pressed',String(l===lang))}document.documentElement.lang=lang==='zh'?'zh-CN':'en';}
+function labels(){const t=ui[lang];el('title').textContent=t.title;el('subtitle').textContent=t.subtitle;el('countLabel').textContent=t.count;el('search').placeholder=t.search;el('sort').options[0].text=t.hoursDesc;el('sort').options[1].text=t.hoursAsc;el('sort').options[2].text=t.name;el('empty').textContent=t.empty;el('backTop').textContent=t.back;for(const l of ['zh','en']){el(l).classList.toggle('active',l===lang);el(l).setAttribute('aria-pressed',String(l===lang))}document.documentElement.lang=lang==='zh'?'zh-CN':'en';}
 function filterButtons(id,items,active,cb){el(id).replaceChildren();for(const item of items){const b=document.createElement('button');b.type='button';b.className='chip'+(active===item.value?' active':'');b.textContent=item.label;b.setAttribute('aria-pressed',String(active===item.value));b.addEventListener('click',()=>{cb(item.value);render()});el(id).append(b)}}
 function render(){labels();const t=ui[lang];el('total').textContent=games.length.toLocaleString();const genres=[...new Set(games.flatMap(g=>g.genres||[]))].sort();const platforms=[...new Set(games.flatMap(g=>g.platforms||[]))].sort();filterButtons('genres',[{value:'all',label:t.all},...genres.map(g=>({value:g,label:g}))],genre,v=>genre=v);filterButtons('platforms',[{value:'all',label:t.allPlatforms},...platforms.map(p=>({value:p,label:p}))],platform,v=>platform=v);
 const q=query.trim().toLocaleLowerCase();let filtered=games.filter(g=>(genre==='all'||(g.genres||[]).includes(genre))&&(platform==='all'||(g.platforms||[]).includes(platform))&&(!q||(g.titleEn+' '+(g.titleZh||'')).toLocaleLowerCase().includes(q)));filtered.sort((a,b)=>{
