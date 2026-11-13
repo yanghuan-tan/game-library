@@ -1,0 +1,210 @@
+---
+const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID || '';
+const dataset = import.meta.env.PUBLIC_SANITY_DATASET || 'production';
+---
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#080808" />
+<meta name="description" content="Yanghuan Tan's personal game library — a collection of games played across Steam, Nintendo Switch, 3DS, and mobile." />
+<title>游戏经历库 · Game Library — Yanghuan Tan</title>
+<link rel="preconnect" href="https://shared.fastly.steamstatic.com" crossorigin />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet" />
+<style is:global>
+/* Game Library — monochrome 8-bit UI, inspired by the supplied reference. */
+:root {
+  --bg:#080808; --panel:#171717; --panel-2:#202020;
+  --white:#f4f4f4; --soft:#d5d5d5; --muted:#9b9b9b;
+  --line:#646464; --shade:#747474;
+  font-family:'Noto Sans SC','DM Sans',sans-serif;
+  color:var(--white);background:var(--bg);color-scheme:dark;font-synthesis:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);margin:0;min-width:300px}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid white;outline-offset:5px}
+::selection{background:#f5f5f5;color:#090909}
+.wrap{max-width:1390px;padding:0 38px;margin:auto}
+.pixel,.eyebrow,.byline,.results,#indexLabel,.summary:before,.footer,.english-sub,
+.chip,.sort,.lang button,.tag,.hero-visual,.total-mark {
+ font-family:'Press Start 2P',monospace;
+}
+.topbar{height:94px;border-bottom:3px solid #4c4c4c;display:flex;justify-content:space-between;align-items:center;gap:14px;position:relative}
+.topbar:after{content:'';position:absolute;bottom:-3px;left:0;width:118px;height:3px;background:#f5f5f5}
+.brand{font-weight:700;font-size:15px;letter-spacing:.01em;color:#fff;display:flex;align-items:center;gap:12px}
+.brand:before{content:'';height:16px;width:16px;background:#fff;box-shadow:inset 0 0 0 4px #0c0c0c,0 0 0 3px #f5f5f5,3px 3px 0 3px #666;display:block;margin:0 4px 0 3px}
+.byline{font-size:7px;line-height:2;letter-spacing:0;color:#aaa;margin-top:12px;white-space:normal}
+.pixel-marker{color:#fff}
+.lang{display:flex;align-items:center;gap:8px;background:transparent;padding:0;border:0}
+.lang button{position:relative;isolation:isolate;min-width:70px;padding:13px 14px;font-size:9px;line-height:1.5;color:#fff;background:#202020;border:3px solid #858585;box-shadow:4px 4px 0 #676767;transition:transform .1s,box-shadow .1s,background .1s;white-space:nowrap}
+.lang button:before,.chip:before,.sort:before{content:'';position:absolute;left:-3px;top:-3px;width:6px;height:6px;background:var(--bg);pointer-events:none}
+.lang button.active{background:#f4f4f4;color:#101010;border-color:#f4f4f4;box-shadow:4px 4px 0 #929292}
+.lang button:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 #999}
+.lang button:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #999}
+.intro{text-align:center;padding:66px 0 57px;display:flex;align-items:center;flex-direction:column;position:relative}
+.intro:after{display:none}
+.eyebrow{font-size:8px;line-height:2.1;letter-spacing:0;color:#d4d4d4;display:flex;align-items:center;gap:13px;justify-content:center;flex-wrap:wrap}
+.eyebrow .slash{color:#8f8f8f}
+.led{width:10px;height:10px;background:#eee;box-shadow:3px 3px 0 #858585;display:inline-block}
+.hero-visual{font-size:clamp(23px,4.8vw,66px);font-weight:400;letter-spacing:-.055em;line-height:1.55;color:#fff;text-shadow:0 5px #333;margin:24px 0 0;text-transform:uppercase;white-space:nowrap}
+.hero-visual .pixel-line{display:block}
+.intro h1{font-size:clamp(20px,2.1vw,31px);font-weight:700;letter-spacing:.01em;line-height:1.4;margin:23px 0 8px;color:#f3f3f3;text-shadow:none}
+.subtitle{font-family:'DM Sans','Noto Sans SC',sans-serif;color:#acacac;font-size:13px;letter-spacing:.03em;margin:2px 0 0;line-height:1.5}
+html[lang='en'] .intro h1{font-family:'Press Start 2P',monospace;font-size:1px;line-height:0;height:1px;margin:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+html[lang='en'] .subtitle{margin-top:18px}
+.summary{background:#1a1a1a;position:relative;display:flex;justify-content:center;align-items:center;gap:20px;border:4px solid #767676;box-shadow:6px 6px 0 #777,11px 11px 0 #292929;padding:25px 32px;margin:45px auto 0;max-width:100%;width:max-content;min-width:300px;isolation:isolate}
+.summary:before{content:'[ LIBRARY STATUS ]';background:#080808;position:absolute;left:18px;top:-11px;color:#f5f5f5;font-size:9px;padding:0 9px;line-height:1.3}
+.summary:after{content:'■';font:12px monospace;position:absolute;right:11px;top:9px;color:#eee}
+.count{font-family:'Press Start 2P',monospace;font-size:clamp(30px,4vw,52px);letter-spacing:-.06em;line-height:1.3;font-weight:400;color:#fff;text-shadow:4px 4px 0 #606060;font-variant-numeric:tabular-nums}
+.count-label{font-size:13px;color:#ececec;font-weight:700;line-height:1.5}
+.status{font-size:12px;line-height:1.6;color:#aaa;margin-top:24px;min-height:0}
+.status:empty{display:none}
+.tools{margin:10px 0 0;padding:34px 0 35px;border-top:2px solid #4f4f4f;border-bottom:2px solid #4f4f4f}
+.toolrow{display:flex;justify-content:space-between;align-items:stretch;gap:22px}
+.search{display:flex;align-items:center;gap:12px;max-width:630px;flex:1;min-width:0;height:59px;border:4px solid #777;background:#191919;box-shadow:6px 6px 0 #626262;padding:0 17px}
+.search:focus-within{border-color:#fff;box-shadow:6px 6px 0 #999}
+.search svg{width:18px;height:18px;flex:none;color:#f4f4f4;stroke-width:2.7px}
+.search input{outline:none;border:0;background:transparent;color:white;width:100%;font-size:14px;min-width:0}
+.search input::placeholder{color:#b0b0b0}
+.sort{height:59px;max-width:220px;padding:0 16px;background:#1e1e1e;border:4px solid #777;color:#f1f1f1;box-shadow:6px 6px 0 #626262;font-size:9px;line-height:1.6;cursor:pointer;position:relative}
+.sort option{background:#171717;color:white;font-family:'Noto Sans SC','DM Sans',sans-serif}
+.chips{display:flex;flex-wrap:wrap;gap:13px 12px;margin-top:26px}
+.chips + .chips{margin-top:22px}
+.chip{position:relative;display:inline-flex;justify-content:center;align-items:center;min-height:43px;padding:12px 14px;background:#1e1e1e;border:3px solid #777;color:#f5f5f5;box-shadow:5px 5px 0 #616161;font-size:9px;line-height:1.6;letter-spacing:-.025em;transition:transform .1s,box-shadow .1s,background .1s;border-radius:0;white-space:normal;text-align:center}
+.chip.active{background:#f3f3f3;color:#111;border-color:#f3f3f3;box-shadow:5px 5px 0 #a1a1a1}
+.chip:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #a3a3a3}
+.chip:active{transform:translate(4px,4px);box-shadow:1px 1px 0 #777}
+.results{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:38px 0 24px;color:#d7d7d7;font-size:9px;line-height:1.8;letter-spacing:0}
+#indexLabel{font-size:8px;color:#999;white-space:nowrap}
+.gallery{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:44px 22px;padding-bottom:110px}
+.game{min-width:0;padding-bottom:3px}
+.cover{position:relative;aspect-ratio:3/4;background:#171717;border:3px solid #6e6e6e;overflow:hidden;border-radius:0;box-shadow:5px 5px 0 #5a5a5a;transition:transform .13s,box-shadow .13s,border-color .13s}
+.cover img{width:100%;height:100%;object-fit:cover;display:block;image-rendering:auto;transition:none}
+.game:hover .cover{border-color:#eee;transform:translate(-2px,-2px);box-shadow:7px 7px 0 #a3a3a3}
+.game:hover .cover img{transform:none}
+.fallback{position:absolute;inset:0;display:flex;align-items:end;padding:13px;background:#242424;color:#eee;font-family:'Press Start 2P',monospace;font-size:12px;line-height:1.7;overflow-wrap:anywhere;z-index:1}
+.fallback:before{content:'?';position:absolute;top:14px;right:14px;font-family:'Press Start 2P',monospace;font-size:20px;color:#777}
+.fallback[hidden]{display:none!important}
+.game h2{color:#fff;font-weight:700;font-family:'Noto Sans SC','DM Sans',sans-serif;font-size:14px;line-height:1.5;letter-spacing:0;margin:16px 0 3px;text-shadow:none;overflow-wrap:anywhere}
+html[lang='en'] .game h2{font-family:'DM Sans',sans-serif}
+.english-sub{color:#b5b5b5;font-size:8px;line-height:1.9;margin:4px 0 8px;overflow-wrap:anywhere}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:7px;line-height:1.7;padding:7px 7px;border:2px solid #656565;background:#1a1a1a;color:#e8e8e8;border-radius:0;overflow-wrap:anywhere}
+.tag.done,.tag.note{background:#e5e5e5;color:#111;border-color:#eee}
+.empty{padding:75px 0;text-align:center;font-size:14px;color:#aaa}
+.empty[hidden]{display:none!important}
+.footer{border-top:2px solid #484848;padding:32px 0 52px;display:flex;align-items:center;justify-content:space-between;gap:20px;line-height:2;color:#a5a5a5;font-size:8px}
+.footer-pixel{color:white;margin-right:9px}
+.footer a{color:#fff;text-decoration:none}
+.footer a:hover{text-decoration:underline}
+@media(max-width:1080px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:760px){
+ .wrap{padding:0 18px}.topbar{height:76px}.brand{font-size:13px}.byline{font-size:6px;margin-top:8px}.lang{gap:5px}.lang button{min-width:48px;padding:11px 8px;font-size:7px;box-shadow:3px 3px 0 #777}
+ .intro{padding:50px 0 40px}.eyebrow{font-size:6px;gap:7px}.hero-visual{font-size:clamp(17px,5.3vw,38px);line-height:1.8;margin-top:18px;letter-spacing:-.04em;text-shadow:0 3px #444}
+ .intro h1{font-size:23px;margin-top:15px}.subtitle{font-size:12px}.summary{margin-top:32px;min-width:0;max-width:calc(100% - 16px);padding:25px 16px 18px;gap:15px;box-shadow:4px 4px 0 #777,7px 7px 0 #222}.summary:before{font-size:7px}.count{font-size:clamp(25px,7vw,37px)}.count-label{font-size:11px}
+ .tools{padding:23px 0 26px}.toolrow{gap:12px}.search,.sort{height:49px;border-width:3px;box-shadow:3px 3px 0 #666}.search{padding:0 9px;gap:7px}.search input{font-size:12px}.sort{max-width:130px;font-size:7px;padding:0 4px}.chips{gap:10px;margin-top:23px}.chips + .chips{margin-top:19px}.chip{min-height:39px;font-size:7px;line-height:1.5;padding:10px 9px;border-width:2px;box-shadow:3px 3px 0 #555}
+ .results{margin:31px 0 20px;font-size:7px}#indexLabel{font-size:6px}.gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:33px 15px}.cover{border-width:2px;box-shadow:3px 3px 0 #555}.game h2{font-size:13px;margin-top:12px}.english-sub{font-size:7px}.tag{font-size:6px;padding:5px}.footer{font-size:6px;flex-wrap:wrap}
+}
+@media(max-width:370px){.hero-visual{font-size:15px}.sort{max-width:106px}.summary{gap:9px}.count{font-size:24px}.eyebrow{font-size:5px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* V4.2 — Simple square outlines; preserve the approved pixel typography. */
+:root { --frame: #868686; }
+.intro h1, .brand, .game h2, .count-label, .subtitle { text-shadow: none !important; filter: none !important; }
+/* Preserve the clean heading, the 8-bit English masthead and number. */
+.hero-visual { text-shadow: none !important; }
+.led { box-shadow: none !important; }
+.brand:before { box-shadow: inset 0 0 0 3px #080808, 0 0 0 2px #eee !important; }
+/* These are actual English descriptions, so they should use the same pixel face
+   as PERSONAL GAME COLLECTION rather than the ordinary sans-serif subtitle. */
+.subtitle {
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 8px;
+  line-height: 2.2;
+  letter-spacing: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+html[lang='en'] .subtitle { margin-top: 18px; }
+html[lang='en'] .count-label {
+  font-family: 'Press Start 2P', monospace !important;
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 2;
+  letter-spacing: 0;
+}
+/* Full, sharp, continuous square frames. No clipping or offset shadows. */
+.lang button, .summary, .search, .sort, .chip, .cover, .tag {
+  border-radius: 0 !important;
+  clip-path: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  border: 2px solid var(--frame) !important;
+}
+.summary { background:#161616; padding:24px 30px; }
+.summary::before { background:#080808; z-index:2; }
+.summary::after { display:none; }
+.search { background:#101010; }
+.search:focus-within { border-color:#f4f4f4 !important; }
+.sort { background:#101010; }
+.chip { background:#141414; color:#f1f1f1; min-height:40px; padding:10px 12px; }
+.chip.active, .lang button.active { background:#f5f5f5; color:#0a0a0a; border-color:#f5f5f5 !important; }
+.chip:hover:not(.active), .lang button:hover:not(.active) { background:#262626; border-color:#eee !important; }
+.chip:active, .lang button:active { box-shadow:none !important; transform:none !important; }
+.lang button { background:#141414; }
+.cover { border-color:#777 !important; }
+.game:hover .cover { border-color:#f5f5f5 !important; box-shadow:none !important; transform:none !important; }
+.tag { border-width:1px !important; background:#151515; }
+.tag.done, .tag.note { background:#e5e5e5; color:#111; border-color:#eee !important; }
+/* Remove corner overlays left from the original button implementation. */
+.chip::before, .sort::before, .lang button::before { display:none !important; }
+@media(max-width:760px) {
+  .lang button,.summary,.search,.sort,.chip,.cover,.tag { clip-path:none !important; box-shadow:none !important; }
+  .summary { padding:22px 16px; }
+  .search,.sort,.chip { border-width:2px !important; }
+  .subtitle { font-size:6.5px; line-height:2.1; padding:0 6px; }
+  html[lang='en'] .count-label { font-size:7px; }
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="topbar"><div><div class="brand" id="brand">游戏经历库</div><div class="byline">BY YANGHUAN TAN <span class="pixel-marker">■</span> EST. 2026</div></div><div class="lang" aria-label="Language"><button class="active" id="zh" aria-pressed="true">中文</button><button id="en" aria-pressed="false">EN</button></div></header>
+<main>
+<section class="intro"><div class="eyebrow"><span class="led" aria-hidden="true"></span> PERSONAL GAME COLLECTION <span class="slash">//</span> 2026</div><div class="hero-visual" aria-hidden="true"><span class="pixel-line">GAME</span><span class="pixel-line">LIBRARY</span></div><h1 id="title">游戏经历库</h1><p class="subtitle" id="subtitle">Curated by Yanghuan Tan</p><div class="summary"><span class="count" id="total">—</span><span class="count-label" id="countLabel">款已收录游戏</span></div><div class="status" id="status" aria-live="polite"></div></section>
+<section class="tools"><div class="toolrow"><label class="search"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg><input id="search" type="search" autocomplete="off" placeholder="搜索游戏名称..." aria-label="Search games" /></label><select id="sort" class="sort" aria-label="Sort games"><option value="hoursDesc">游玩时长：从高到低</option><option value="hoursAsc">游玩时长：从低到高</option><option value="name">名称 A–Z</option></select></div><div class="chips" id="genres" aria-label="Genre filters"></div><div class="chips" id="platforms" aria-label="Platform filters"></div></section>
+<div class="results"><span id="results">GAME INDEX</span><span id="indexLabel">[ CURATED COLLECTION ]</span></div><div class="gallery" id="gallery"></div><div class="empty" id="empty" hidden>没有找到符合条件的游戏。</div>
+</main><footer class="footer"><span><span class="footer-pixel">■</span> GAME LIBRARY © YANGHUAN TAN</span><a href="#top" id="backTop">返回顶部 ↑</a></footer>
+</div>
+<script define:vars={{projectId,dataset}}>
+const ui={zh:{brand:'游戏经历库',title:'游戏经历库',subtitle:'Curated by Yanghuan Tan',count:'款已收录游戏',search:'搜索游戏名称...',all:'全部类型',allPlatforms:'全部平台',hoursDesc:'游玩时长：从高到低',hoursAsc:'游玩时长：从低到高',name:'名称 A–Z',completed:'已通关',played:'已游玩',progress:'进行中',empty:'没有找到符合条件的游戏',results:n=>`当前显示 ${n} 款`,back:'返回顶部 ↑',status:'正在读取游戏库…'},en:{brand:'Game Library',title:'Game Library',subtitle:'Curated by Yanghuan Tan',count:'games collected',search:'Search by game title...',all:'All genres',allPlatforms:'All platforms',hoursDesc:'Most played',hoursAsc:'Least played',name:'Title A–Z',completed:'Completed',played:'Played',progress:'In progress',empty:'No matching games',results:n=>`${n} games shown`,back:'Back to top ↑',status:'Loading library…'}};
+let lang='zh',genre='all',platform='all',sort='hoursDesc',query='',games=[];
+const el=id=>document.getElementById(id);
+const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function title(g){return lang==='zh'&&(g.titleZh||'').trim()?g.titleZh:g.titleEn}
+function labels(){const t=ui[lang];el('brand').textContent=t.brand;el('title').textContent=t.title;el('subtitle').textContent=t.subtitle;el('countLabel').textContent=t.count;el('search').placeholder=t.search;el('sort').options[0].text=t.hoursDesc;el('sort').options[1].text=t.hoursAsc;el('sort').options[2].text=t.name;el('empty').textContent=t.empty;el('backTop').textContent=t.back;for(const l of ['zh','en']){el(l).classList.toggle('active',l===lang);el(l).setAttribute('aria-pressed',String(l===lang))}document.documentElement.lang=lang==='zh'?'zh-CN':'en';}
+function filterButtons(id,items,active,cb){el(id).replaceChildren();for(const item of items){const b=document.createElement('button');b.type='button';b.className='chip'+(active===item.value?' active':'');b.textContent=item.label;b.setAttribute('aria-pressed',String(active===item.value));b.addEventListener('click',()=>{cb(item.value);render()});el(id).append(b)}}
+function render(){labels();const t=ui[lang];el('total').textContent=games.length.toLocaleString();const genres=[...new Set(games.flatMap(g=>g.genres||[]))].sort();const platforms=[...new Set(games.flatMap(g=>g.platforms||[]))].sort();filterButtons('genres',[{value:'all',label:t.all},...genres.map(g=>({value:g,label:g}))],genre,v=>genre=v);filterButtons('platforms',[{value:'all',label:t.allPlatforms},...platforms.map(p=>({value:p,label:p}))],platform,v=>platform=v);
+const q=query.trim().toLocaleLowerCase();let filtered=games.filter(g=>(genre==='all'||(g.genres||[]).includes(genre))&&(platform==='all'||(g.platforms||[]).includes(platform))&&(!q||(g.titleEn+' '+(g.titleZh||'')).toLocaleLowerCase().includes(q)));filtered.sort((a,b)=>{
+  if(sort==='name') return title(a).localeCompare(title(b),lang==='zh'?'zh':'en');
+  const aHasHours=typeof a.hours==='number'&&Number.isFinite(a.hours);
+  const bHasHours=typeof b.hours==='number'&&Number.isFinite(b.hours);
+  if(!aHasHours&&!bHasHours) return title(a).localeCompare(title(b),lang==='zh'?'zh':'en');
+  if(!aHasHours) return 1;
+  if(!bHasHours) return -1;
+  const difference=sort==='hoursAsc'?a.hours-b.hours:b.hours-a.hours;
+  return difference||title(a).localeCompare(title(b),lang==='zh'?'zh':'en');
+});el('results').textContent=t.results(filtered.length);el('empty').hidden=filtered.length!==0;const frag=document.createDocumentFragment();for(const g of filtered){const card=document.createElement('article');card.className='game';const cover=document.createElement('div');cover.className='cover';const placeholder=document.createElement('div');placeholder.className='fallback';placeholder.textContent=g.titleEn;cover.append(placeholder);if(g.coverUrl){const img=document.createElement('img');img.src=g.coverUrl;img.alt=title(g)+' cover';img.loading='lazy';img.decoding='async';img.addEventListener('load',()=>placeholder.hidden=true);img.addEventListener('error',()=>img.remove());cover.append(img)}card.append(cover);const h=document.createElement('h2');h.textContent=title(g);card.append(h);if(lang==='zh'&&g.titleZh&&g.titleZh!==g.titleEn){const sub=document.createElement('p');sub.className='english-sub';sub.textContent=g.titleEn;card.append(sub)}const tags=document.createElement('div');tags.className='tags';const addTag=(value,cls='')=>{const s=document.createElement('span');s.className='tag '+cls;s.textContent=value;tags.append(s)};for(const x of (g.genres||[]).slice(0,2))addTag(x);for(const x of (g.platforms||[]))addTag(x);if(Number.isFinite(g.hours))addTag(`${Number(g.hours).toLocaleString(lang==='zh'?'zh-CN':'en-US',{maximumFractionDigits:1})}h`);if(g.status==='completed')addTag(t.completed,'done');else if(g.status==='played')addTag(t.played);else if(g.status==='progress')addTag(t.progress);if(g.achievementsTotal>0&&g.achievementsEarned===g.achievementsTotal)addTag(lang==='zh'?'全成就':'100% achievements','note');const note=lang==='zh'?g.noteZh:g.noteEn;if(note)addTag(note,'note');card.append(tags);frag.append(card)}el('gallery').replaceChildren(frag)}
+el('zh').addEventListener('click',()=>{lang='zh';render()});el('en').addEventListener('click',()=>{lang='en';render()});el('search').addEventListener('input',e=>{query=e.target.value;render()});el('sort').addEventListener('change',e=>{sort=e.target.value;render()});el('backTop').addEventListener('click',e=>{e.preventDefault();window.scrollTo({top:0,behavior:'smooth'})});render();
+if(projectId){const groq='*[_type == "game" && !(_id in path("drafts.**"))] | order(order asc){"id":_id,titleEn,titleZh,genres,platforms,hours,steamHours,status,noteZh,noteEn,achievementsEarned,achievementsTotal,order,"coverUrl":coalesce(cover.asset->url,coverUrl)}';const url=`https://${projectId}.api.sanity.io/v2025-02-19/data/query/${dataset}?query=${encodeURIComponent(groq)}`;el('status').textContent=ui[lang].status;fetch(url,{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Sanity API '+r.status);return r.json()}).then(data=>{if(Array.isArray(data.result)){games=data.result;genre='all';platform='all';render();el('status').textContent=''}}).catch(e=>{console.warn(e);el('status').textContent=lang==='zh'?`无法读取 Sanity 游戏数据：${e.message}。请检查 .env、数据集公开权限及 CORS。`:`Cannot load Sanity games: ${e.message}. Check .env, public dataset access, and CORS.`})}else{el('status').textContent='缺少 PUBLIC_SANITY_PROJECT_ID，请检查 .env 配置。'}
+</script>
+</body></html>
